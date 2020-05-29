@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1062
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PseudoGUILib", "PseudoGUILib\PseudoGUILib.csproj", "{66095A76-E4FD-48A8-B926-2290E75E21A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PseudoGUILib-Demo", "PseudoGUILib-Demo\PseudoGUILib-Demo.csproj", "{EA9460D7-239D-4E39-8EC0-50FC02A381CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{66095A76-E4FD-48A8-B926-2290E75E21A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66095A76-E4FD-48A8-B926-2290E75E21A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66095A76-E4FD-48A8-B926-2290E75E21A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA9460D7-239D-4E39-8EC0-50FC02A381CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9460D7-239D-4E39-8EC0-50FC02A381CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9460D7-239D-4E39-8EC0-50FC02A381CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9460D7-239D-4E39-8EC0-50FC02A381CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PseudoGUILib
+namespace PseudoGUILib.UI.Attributes
 {
-    public class Class1
+    public enum SizeMode
     {
+        Auto,
+        Fixed
     }
 }
