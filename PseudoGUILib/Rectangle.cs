@@ -2,6 +2,21 @@
 
 namespace PseudoGUILib
 {
+    public struct TwoPointRect
+    {
+
+        public int x;
+        public int y;
+        public int x2;
+        public int y2;
+        public TwoPointRect(int x, int y, int x2, int y2)
+        {
+            this.x = x;
+            this.y = y;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+    }
     public struct Rectangle
     {
         public int x;

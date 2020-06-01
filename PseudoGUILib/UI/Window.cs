@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PseudoGUILib.UI
 {
     public class Window : UIElement
     {
-        public delegate void UpdateHandler();
-        public event UpdateHandler Update;
-
-        private Renderer renderer;
-        public Window(Renderer renderer)
+        public Window(int width, int height)
         {
-            this.renderer = renderer;
-            RecalculatePositionSize();
+            SetSize(width, height);
+        }
+
+        internal void SetSize(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+            OnPositionSizeChanged(this);
         }
 
         protected override void ProcessNewChild(UIElement element)
@@ -26,18 +24,12 @@ namespace PseudoGUILib.UI
 
         internal override void Draw(Renderer renderer, Rectangle screenPortion)
         {
-            Update?.Invoke();
             foreach (var child in children)
                 child.Draw(renderer, new Rectangle(X, Y, width, height));
         }
 
         protected override void RecalculatePositionSize()
         {
-            X = 0;
-            Y = 0;
-            width = renderer.Width;
-            height = renderer.Height;
-            OnPositionSizeChanged(this);
         }
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace FastConsole
@@ -13,6 +9,27 @@ namespace FastConsole
         public char Character;
         public ConsoleColor BgColor;
         public ConsoleColor TextColor;
+
+        public override bool Equals(object obj)
+        {
+            return obj is ConsChar @char &&
+                   Character == @char.Character &&
+                   BgColor == @char.BgColor &&
+                   TextColor == @char.TextColor;
+        }
+
+        public static bool operator ==(ConsChar c1, ConsChar c2)
+        {
+            return c1.Character == c2.Character &&
+                   c1.BgColor == c2.BgColor &&
+                   c1.TextColor == c2.TextColor;
+        }
+        public static bool operator !=(ConsChar c1, ConsChar c2)
+        {
+            return c1.Character != c2.Character ||
+                   c1.BgColor != c2.BgColor ||
+                   c1.TextColor != c2.TextColor;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -100,7 +117,7 @@ namespace FastConsole
                 for (int i = 0; i < width; i++)
                 {
                     Native.wAttribute attribute = ColorsToWAttribute(buffer[i, j].TextColor, buffer[i, j].BgColor);
-                    
+
                     Native.CHAR_INFO info = new Native.CHAR_INFO()
                     {
                         c = (short)buffer[i, j].Character,

@@ -43,8 +43,8 @@
   <ItemGroup>
     <Compile Include="FastConsole\Native.cs" />
     <Compile Include="FastConsole\Output.cs" />
-    <Compile Include="Manager.cs" />
-    <Compile Include="NativeWindows.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="NativeWin.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +53,7 @@
     <Compile Include="UI\Attributes\ThicknessRectangle.cs" />
     <Compile Include="UI\Attributes\SizeMode.cs" />
     <Compile Include="UI\Border.cs" />
+    <Compile Include="UI\Button.cs" />
     <Compile Include="UI\StackPanel.cs" />
     <Compile Include="UI\UIElement.cs" />
     <Compile Include="UI\Window.cs" />

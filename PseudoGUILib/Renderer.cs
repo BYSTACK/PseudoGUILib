@@ -1,17 +1,14 @@
 ﻿using FastConsole;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PseudoGUILib
 {
     public class Renderer
     {
-        private char[,] curScreenBuffer;
-        private char[,] newScreenBuffer;
+
+        private ConsChar[,] curScreenBuffer;
+        private ConsChar[,] screenBuffer;
         public int Width { get; private set; }
         public int Height { get; private set; }
 
@@ -52,20 +49,15 @@ namespace PseudoGUILib
 
         public Renderer(int width, int height)
         {
-            if (width > Console.LargestWindowWidth)
-                width = Console.LargestWindowWidth;
-            if (height > Console.LargestWindowHeight)
-                height = Console.LargestWindowHeight;
-            Console.WindowWidth = width;
-            Console.WindowHeight = height;
-            Width = Console.WindowWidth;
-            Height = Console.WindowHeight;
-            curScreenBuffer = new char[Width, Height];
-            newScreenBuffer = new char[Width, Height];
-            Console.CursorVisible = false;
-            Console.BufferWidth = Width;
-            Console.BufferHeight = Height;
-            //NativeWindows.DisableConsoleResize();
+            Resize(width, height);
+        }
+
+        public void Resize(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            screenBuffer = new ConsChar[Width, Height];
+            curScreenBuffer = new ConsChar[Width, Height];
         }
 
         public void Display()
@@ -74,10 +66,10 @@ namespace PseudoGUILib
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    if (newScreenBuffer[i, j] != curScreenBuffer[i, j])
+                    if (curScreenBuffer[i, j] != screenBuffer[i, j])
                     {
-                        curScreenBuffer[i, j] = newScreenBuffer[i, j];
-                        FConsole.Write(new string(newScreenBuffer[i, j], 1), new ConsolePos() { x = (short)i, y = (short)j });
+                        FConsole.Write(new string(screenBuffer[i, j].Character, 1), new ConsolePos() { x = (short)i, y = (short)j }, screenBuffer[i, j].TextColor, screenBuffer[i, j].BgColor);
+                        curScreenBuffer[i, j] = screenBuffer[i, j];
                     }
                 }
             }
@@ -89,17 +81,13 @@ namespace PseudoGUILib
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    newScreenBuffer[i, j] = ' ';
+                    screenBuffer[i, j].Character = ' ';
+                    screenBuffer[i, j].BgColor = ConsoleColor.Black;
+                    screenBuffer[i, j].TextColor = ConsoleColor.White;
                 }
             }
         }
 
-        public void DrawChar(char character, int x, int y)
-        {
-            if (x >= Width || x < 0 || y >= Height || y < 0)
-                return;
-            newScreenBuffer[x, y] = character;
-        }
 
         private bool Inside(Rectangle screenPortion, int x, int y)
         {
@@ -107,37 +95,77 @@ namespace PseudoGUILib
                     !(x < 0 || y < 0 || x >= Width || y >= Height);
         }
 
-        public void DrawBox(Rectangle box, Rectangle screenPortion)
+        public void DrawBox(Rectangle box, Rectangle screenPortion, ConsoleColor boxColor, ConsoleColor? fillColor)
         {
             if (box.width <= 1 || box.height <= 1)
                 return;
+            //draw corners
             if (Inside(screenPortion, box.x, box.y))
-                newScreenBuffer[box.x, box.y] = AddBox(newScreenBuffer[box.x, box.y], Box.DOWN_RIGHT);
+            {
+                screenBuffer[box.x, box.y].Character = AddBox(screenBuffer[box.x, box.y].Character, Box.DOWN_RIGHT);
+                screenBuffer[box.x, box.y].TextColor = boxColor;
+            }
             if (Inside(screenPortion, box.x + box.width - 1, box.y))
-                newScreenBuffer[box.x + box.width - 1, box.y] = AddBox(newScreenBuffer[box.x + box.width - 1, box.y], Box.DOWN_LEFT);
-            if (Inside(screenPortion, box.x, box.y + box.height - 1))
-                newScreenBuffer[box.x, box.y + box.height - 1] = AddBox(newScreenBuffer[box.x, box.y + box.height - 1], Box.UP_RIGHT);
-            if (Inside(screenPortion, box.x + box.width - 1, box.y + box.height - 1))
-                newScreenBuffer[box.x + box.width - 1, box.y + box.height - 1] = AddBox(newScreenBuffer[box.x + box.width - 1, box.y + box.height - 1], Box.UP_LEFT);
+            {
+                screenBuffer[box.x + box.width - 1, box.y].Character = AddBox(screenBuffer[box.x + box.width - 1, box.y].Character, Box.DOWN_LEFT);
+                screenBuffer[box.x + box.width - 1, box.y].TextColor = boxColor;
+            }
 
+            if (Inside(screenPortion, box.x, box.y + box.height - 1))
+            {
+                screenBuffer[box.x, box.y + box.height - 1].Character = AddBox(screenBuffer[box.x, box.y + box.height - 1].Character, Box.UP_RIGHT);
+                screenBuffer[box.x, box.y + box.height - 1].TextColor = boxColor;
+            }
+
+            if (Inside(screenPortion, box.x + box.width - 1, box.y + box.height - 1))
+            {
+                screenBuffer[box.x + box.width - 1, box.y + box.height - 1].Character = AddBox(screenBuffer[box.x + box.width - 1, box.y + box.height - 1].Character, Box.UP_LEFT);
+                screenBuffer[box.x + box.width - 1, box.y + box.height - 1].TextColor = boxColor;
+            }
+
+            //hor borders
             for (int i = 1; i < box.width - 1; i++)
             {
                 if (Inside(screenPortion, box.x + i, box.y))
-                    newScreenBuffer[box.x + i, box.y] = AddBox(newScreenBuffer[box.x + i, box.y], Box.HORIZONTAL);
+                {
+                    screenBuffer[box.x + i, box.y].Character = AddBox(screenBuffer[box.x + i, box.y].Character, Box.HORIZONTAL);
+                    screenBuffer[box.x + i, box.y].TextColor = boxColor;
+                }
                 if (Inside(screenPortion, box.x + i, box.y + box.height - 1))
-                    newScreenBuffer[box.x + i, box.y + box.height - 1] = AddBox(newScreenBuffer[box.x + i, box.y + box.height - 1], Box.HORIZONTAL);
+                {
+                    screenBuffer[box.x + i, box.y + box.height - 1].Character = AddBox(screenBuffer[box.x + i, box.y + box.height - 1].Character, Box.HORIZONTAL);
+                    screenBuffer[box.x + i, box.y + box.height - 1].TextColor = boxColor;
+                }
             }
 
+            //ver borders
             for (int i = 1; i < box.height - 1; i++)
             {
                 if (Inside(screenPortion, box.x, box.y + i))
-                    newScreenBuffer[box.x, box.y + i] = AddBox(newScreenBuffer[box.x, box.y + i], Box.VERTICAL);
+                {
+                    screenBuffer[box.x, box.y + i].Character = AddBox(screenBuffer[box.x, box.y + i].Character, Box.VERTICAL);
+                    screenBuffer[box.x, box.y + i].TextColor = boxColor;
+                }
                 if (Inside(screenPortion, box.x + box.width - 1, box.y + i))
-                    newScreenBuffer[box.x + box.width - 1, box.y + i] = AddBox(newScreenBuffer[box.x + box.width - 1, box.y + i], Box.VERTICAL);
+                {
+                    screenBuffer[box.x + box.width - 1, box.y + i].Character = AddBox(screenBuffer[box.x + box.width - 1, box.y + i].Character, Box.VERTICAL);
+                    screenBuffer[box.x + box.width - 1, box.y + i].TextColor = boxColor;
+                }
+            }
+
+            //fill
+            if (fillColor.HasValue)
+            {
+                for (int i = box.x; i < box.width + box.x && i < Width; i++)
+                {
+                    for (int j = box.y; j < box.height + box.y && j < Height; j++)
+                    {
+                        screenBuffer[i, j].BgColor = fillColor.Value;
+                    }
+                }
             }
         }
-
-        public void DrawText(Rectangle rect, Rectangle screenPortion, string formattedText)
+        public void DrawText(Rectangle rect, Rectangle screenPortion, string formattedText, ConsoleColor textColor, ConsoleColor? backgroundColor)
         {
             if (formattedText.Length == 0 || rect.width <= 0 || rect.height <= 0 || screenPortion.width <= 0 || screenPortion.height <= 0)
                 return;
@@ -173,7 +201,10 @@ namespace PseudoGUILib
             {
                 for (int j = 0; j < lines[i].Length; j++)
                 {
-                    newScreenBuffer[rect.x + leftTrim + j, rect.y + topTrim + i] = lines[i][j];
+                    screenBuffer[rect.x + leftTrim + j, rect.y + topTrim + i].Character = lines[i][j];
+                    screenBuffer[rect.x + leftTrim + j, rect.y + topTrim + i].TextColor = textColor;
+                    if (backgroundColor.HasValue)
+                        screenBuffer[rect.x + leftTrim + j, rect.y + topTrim + i].BgColor = backgroundColor.Value;
                 }
             }
         }

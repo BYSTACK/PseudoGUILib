@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PseudoGUILib.UI.Attributes
 {
     public class TextBlock : UIElement
     {
-        private string text;
+        private string text = "";
         public string Text
         {
             get => text; set
@@ -25,7 +22,7 @@ namespace PseudoGUILib.UI.Attributes
 
         internal override void Draw(Renderer renderer, Rectangle screenPortion)
         {
-            renderer.DrawText(new Rectangle(X, Y, width, height), screenPortion, formattedTextCache);
+            renderer.DrawText(new Rectangle(X, Y, width, height), screenPortion, formattedTextCache, ConsoleColor.Black, null);
         }
 
         protected override void ProcessNewChild(UIElement element)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FastConsole
 {
-    internal class Native
+    public class Native
     {
         public enum nStdHandle : Int32
         {

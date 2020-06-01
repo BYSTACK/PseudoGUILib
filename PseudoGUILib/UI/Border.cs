@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PseudoGUILib.UI
 {
     public class Border : UIElement
     {
+        public ConsoleColor BorderColor { get; set; } = ConsoleColor.White;
+        public ConsoleColor FillColor { get; set; } = ConsoleColor.Gray;
+        public bool EnableFill { get; set; } = true;
+
         internal override void Draw(Renderer renderer, Rectangle screenPortion)
         {
-            renderer.DrawBox(new Rectangle(X, Y, Width, Height), screenPortion);
+            if (EnableFill)
+                renderer.DrawBox(new Rectangle(X, Y, Width, Height), screenPortion, BorderColor, FillColor);
+            else
+                renderer.DrawBox(new Rectangle(X, Y, Width, Height), screenPortion, BorderColor, null);
+
             foreach (var child in children)
                 child.Draw(renderer, screenPortion.Intersection(GetChildContainer(child)));
         }

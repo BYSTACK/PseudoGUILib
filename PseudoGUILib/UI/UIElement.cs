@@ -7,6 +7,24 @@ using System.Threading.Tasks;
 
 namespace PseudoGUILib.UI
 {
+    internal enum MouseButton
+    {
+        Left, Right, Middle
+    }
+
+    internal enum MouseEventType
+    {
+        Press,
+        Release,
+    }
+    internal struct MouseArgs
+    {
+        public bool inside;
+        public int X;
+        public int Y;
+        public MouseEventType type;
+        public MouseButton button;
+    }
     abstract public class UIElement
     {
         public IReadOnlyList<UIElement> Children { get => children; }
@@ -161,6 +179,15 @@ namespace PseudoGUILib.UI
         protected void OnPositionSizeChanged(UIElement sender)
         {
             PositionSizeChanged?.Invoke(sender);
+        }
+
+        internal virtual void MouseEvent(MouseArgs args)
+        {
+            foreach (var child in children)
+            {
+                args.inside = args.X >= child.X && args.Y >= child.Y && args.X < child.X + child.width && args.Y < child.Y + child.height;
+                child.MouseEvent(args);
+            }
         }
 
         protected virtual void ProcessRemovedChild(UIElement element) { }
